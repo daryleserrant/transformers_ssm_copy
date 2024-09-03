@@ -183,9 +183,9 @@ def squad_evaluation(model_name,model,tokenizer):
     
     lengths = list(problems.keys())
 
-    print("-"*200,flush=True)
-    print(f"LENGTHS {lengths}",flush=True)
-    print("-"*200,flush=True)
+    #print("-"*200,flush=True)
+    #print(f"LENGTHS {lengths}",flush=True)
+    #print("-"*200,flush=True)
     num_examples = 30
 
     em_list = []
@@ -252,15 +252,15 @@ def squad_evaluation(model_name,model,tokenizer):
                 f1_for_this_question = metric_max_over_ground_truths(f1_score, pred_model, gt)
                 tmp_f1.append(f1_for_this_question)
                 f1 += f1_for_this_question
-                print("\n")
-                print("--"*100)
-                print(f"PROMPT\n{prompt}\n\n\n")
-                print(f"QUESTION {question}\n\n")
-                print(f"\n\nPRED MODEL {pred_model}")
-                print(f"\n\n LBL {gt}")
-                print(f"LEN {ood_length}; idx {ctr+1}; em {em/(ctr+1)}; f1 {f1/(ctr+1)}",flush=True)
-                print("--"*100)
-                print("\n")
+                #print("\n")
+                #print("--"*100)
+                #print(f"PROMPT\n{prompt}\n\n\n")
+                #print(f"QUESTION {question}\n\n")
+                #print(f"\n\nPRED MODEL {pred_model}")
+                #print(f"\n\n LBL {gt}")
+                #print(f"LEN {ood_length}; idx {ctr+1}; em {em/(ctr+1)}; f1 {f1/(ctr+1)}",flush=True)
+                #print("--"*100)
+                #print("\n")
                 counter_prob+=1
                 if counter_prob >= num_examples:
                     break
@@ -280,10 +280,10 @@ def squad_evaluation(model_name,model,tokenizer):
         std_em_list.append(std_em)
         std_f1_list.append(std_f1)
 
-        print(f"search; {ood_length}; em: {em}; f1: {f1}",flush=True)
+        #print(f"search; {ood_length}; em: {em}; f1: {f1}",flush=True)
     
-    print("\n\n\n\n\n")
-    print(f"LENGTHS {lengths}",flush=True)
+    #print("\n\n\n\n\n")
+    #print(f"LENGTHS {lengths}",flush=True)
     return em_list, f1_list, std_em_list, std_f1_list
 
 

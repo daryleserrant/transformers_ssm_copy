@@ -58,6 +58,7 @@ elif args.eval_task == "squad":
         entry['std_exact_match_score'] = std_em_list[0]
         entry['std_f1_score'] = std_f1_list[0]
         eval_results.append(entry)
+        print(entry)
     df = pd.DataFrame(eval_results)
     df.to_csv("squal_eval_results.csv", index=False)
 else:
