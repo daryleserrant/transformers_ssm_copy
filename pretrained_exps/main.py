@@ -48,7 +48,7 @@ print(args)
 
 ## Get tokenizer & model
 tokenizer = get_tokenizer()
-model = get_model(args)
+model = get_model(args.model)
 print("^"*100)
 print(model)
 print("^"*100)
