@@ -16,6 +16,7 @@ eval_len = [20, 40, 80, 160, 320]
 
 if args.eval_task == "c4_copy":
     eval_results = []
+    print("Starting c4_copy task evals...")
     for model_name in models:
         for s in eval_len:
             entry = {}
@@ -28,10 +29,12 @@ if args.eval_task == "c4_copy":
             entry['avg_accuracy'] = str_acc_mean_list[0]
             entry['std_acuracy'] = str_acc_std_list[0]
             eval_results.append(entry)
+            print(entry)
     df = pd.DataFrame(eval_results)
     df.to_csv(f"c4_copy_{args.text_order}_eval_results.csv", index=False)
 elif args.eval_task == "phone_book":
     eval_results = []
+    print("Starting phone_book task evals...")
     for model_name in models:
         for s in eval_len:
             entry = {}
@@ -43,10 +46,12 @@ elif args.eval_task == "phone_book":
             entry['avg_accuracy'] = str_acc_mean_list[0]
             entry['std_acuracy'] = str_acc_std_list[0]
             eval_results.append(entry)
+            print(entry)
     df = pd.DataFrame(eval_results)
     df.to_csv("phone_book_eval_results.csv", index=False)
 elif args.eval_task == "squad":
     eval_results = []
+    print("Starting squal task evals...")
     for model_name in models:
         entry = {}
         tokenizer = get_tokenizer()

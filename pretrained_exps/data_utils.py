@@ -13,7 +13,8 @@ class EvalC4CopyDataset:
         self.max_length = max_length
         self.num_examples = num_examples
         self.batch_size = batch_size
-        self.dataset = load_dataset("c4","en",split="train[:5%]")
+        #self.dataset = load_dataset("c4","en",split="train[:5%]")
+        self.dataset = load_dataset("datablations/c4-filter-small")
         self.tokenizer = tokenizer
         self.text_order = text_order
 

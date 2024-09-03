@@ -9,10 +9,10 @@ from data_utils import EvalC4CopyDataset, PhoneBookDataset
 def copy_c4_evaluation(min_eval_len, max_eval_len, text_order, eval_num_batches, eval_batch_size, model_name, model,tokenizer):
 
     lengths = np.arange(min_eval_len,max_eval_len+1)
-    print(f"LEN {lengths}")
+    #print(f"LEN {lengths}")
     str_acc_mean_list = []
     str_acc_std_list  = []
-    print("\n")
+    #print("\n")
 
     for ood_length in lengths:
         str_acc_batch = np.zeros(eval_num_batches)
@@ -68,14 +68,14 @@ def copy_c4_evaluation(min_eval_len, max_eval_len, text_order, eval_num_batches,
                 
                 str_acc_batch[jj] += int(gt==pred_model)
                 count_questions+=1
-                print("\n\n\n")
-                print("--"*100,flush=True)
-                print(f"CLEAN {pred_model}\n",flush=True)
-                print(f"GT {gt}",flush=True)
-                print(f"CORRECT {(gt==pred_model)}",flush=True)
-                print(f"SEED {jj}; LEN {ood_length}; idx {count_questions}; current result {str_acc_batch[jj]/count_questions}")
-                print("--"*100,flush=True)
-                print("\n\n\n")
+                #print("\n\n\n")
+                #print("--"*100,flush=True)
+                #print(f"CLEAN {pred_model}\n",flush=True)
+                #print(f"GT {gt}",flush=True)
+                #print(f"CORRECT {(gt==pred_model)}",flush=True)
+                #print(f"SEED {jj}; LEN {ood_length}; idx {count_questions}; current result {str_acc_batch[jj]/count_questions}")
+                #print("--"*100,flush=True)
+                #print("\n\n\n")
             str_acc_batch[jj] = str_acc_batch[jj]/count_questions
 
         mean_str_acc = np.mean(str_acc_batch)
@@ -84,9 +84,9 @@ def copy_c4_evaluation(min_eval_len, max_eval_len, text_order, eval_num_batches,
         str_acc_mean_list.append(mean_str_acc)
         str_acc_std_list.append(std_str_acc)
 
-        print(f"C4 {text_order}; len {ood_length}: {mean_str_acc} +- {std_str_acc}")
+        #print(f"C4 {text_order}; len {ood_length}: {mean_str_acc} +- {std_str_acc}")
     
-    print("\n")
+    #print("\n")
     return str_acc_mean_list, str_acc_std_list
 
 
@@ -149,15 +149,15 @@ def phone_book_evaluation(min_eval_len, max_eval_len, eval_num_batches, eval_bat
                 pred_model=tokenizer.batch_decode(generated_tokens.tolist())[0]
                 pred_model = str(pred_model.split("\n")[0].strip())
                 str_acc_batch[jj] += int(gt==pred_model)
-                print("\n\n\n")
-                print("--"*100,flush=True)
-                print(f"PHONE-BOOK\n{prompt}\n\n")
-                print(f"CLEAN {pred_model}\n",flush=True)
-                print(f"GT {gt}",flush=True)
-                print(f"CORRECT {(gt==pred_model)}",flush=True)
-                print(f"SEED {jj}; LEN {ood_length}; idx {count_questions}; current result {str_acc_batch[jj]/count_questions}")
-                print("--"*100,flush=True)
-                print("\n\n\n")
+                #print("\n\n\n")
+                #print("--"*100,flush=True)
+                #print(f"PHONE-BOOK\n{prompt}\n\n")
+                #print(f"CLEAN {pred_model}\n",flush=True)
+                #print(f"GT {gt}",flush=True)
+                #print(f"CORRECT {(gt==pred_model)}",flush=True)
+                #print(f"SEED {jj}; LEN {ood_length}; idx {count_questions}; current result {str_acc_batch[jj]/count_questions}")
+                #print("--"*100,flush=True)
+                #print("\n\n\n")
                 count_questions+=1
 
 
@@ -169,7 +169,7 @@ def phone_book_evaluation(min_eval_len, max_eval_len, eval_num_batches, eval_bat
         str_acc_mean_list.append(mean_str_acc)
         str_acc_std_list.append(std_str_acc)
         
-        print(f"phone_book; len {ood_length}: {mean_str_acc} +- {std_str_acc};")
+        #print(f"phone_book; len {ood_length}: {mean_str_acc} +- {std_str_acc};")
 
     return str_acc_mean_list, str_acc_std_list
 
