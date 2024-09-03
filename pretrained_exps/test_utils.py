@@ -6,23 +6,23 @@ from qa_evaluation_utils import f1_score, exact_match_score,  metric_max_over_gr
 from data_utils import EvalC4CopyDataset, PhoneBookDataset
 
 
-def copy_c4_evaluation(args,model,tokenizer):
+def copy_c4_evaluation(min_eval_len, max_eval_len, text_order, eval_num_batches, eval_batch_size, model_name, model,tokenizer):
 
-    lengths = np.arange(args.min_eval_len,args.max_eval_len+1)
+    lengths = np.arange(min_eval_len,max_eval_len+1)
     print(f"LEN {lengths}")
     str_acc_mean_list = []
     str_acc_std_list  = []
     print("\n")
 
     for ood_length in lengths:
-        str_acc_batch = np.zeros(args.eval_num_batches)
-        for jj in range(args.eval_num_batches):
+        str_acc_batch = np.zeros(eval_num_batches)
+        for jj in range(eval_num_batches):
 
             ##load dataset
             long_dataset = EvalC4CopyDataset(
                     tokenizer, 
-                    text_order=args.text_order,
-                    batch_size=args.eval_batch_size, 
+                    text_order=text_order,
+                    batch_size=eval_batch_size, 
                     min_length=ood_length, 
                     max_length=ood_length,
                     )
@@ -38,7 +38,7 @@ def copy_c4_evaluation(args,model,tokenizer):
                 max_length = int(1.5*input_ids.shape[1]) + 50
                 
                 ##generation
-                if "mamba" in args.model:
+                if "mamba" in model_name:
                     fn = lambda: model.generate(
                             input_ids=input_ids,
                             max_length=max_length,
@@ -84,7 +84,7 @@ def copy_c4_evaluation(args,model,tokenizer):
         str_acc_mean_list.append(mean_str_acc)
         str_acc_std_list.append(std_str_acc)
 
-        print(f"C4 {args.text_order}; len {ood_length}: {mean_str_acc} +- {std_str_acc}")
+        print(f"C4 {text_order}; len {ood_length}: {mean_str_acc} +- {std_str_acc}")
     
     print("\n")
     return str_acc_mean_list, str_acc_std_list
@@ -93,19 +93,19 @@ def copy_c4_evaluation(args,model,tokenizer):
 
 
 
-def phone_book_evaluation(args,model,tokenizer):
+def phone_book_evaluation(min_eval_len, max_eval_len, eval_num_batches, eval_batch_size, model_name, model, tokenizer):
 
-    lengths= np.arange(args.min_eval_len, args.max_eval_len+1)
+    lengths= np.arange(min_eval_len, max_eval_len+1)
 
     str_acc_mean_list = []
     str_acc_std_list = []
     for ood_length in lengths:
-        str_acc_batch = np.zeros(args.eval_num_batches)
-        for jj in range(args.eval_num_batches):
+        str_acc_batch = np.zeros(eval_num_batches)
+        for jj in range(eval_num_batches):
             
             ##load phone book dataset
             long_dataset = PhoneBookDataset(
-                    batch_size=args.eval_batch_size,
+                    batch_size=eval_batch_size,
                     min_length=ood_length,
                     max_length=ood_length
                     )
@@ -122,7 +122,7 @@ def phone_book_evaluation(args,model,tokenizer):
                 max_length = input_ids.shape[1] + 50
                 
                 ##generation
-                if "mamba" in args.model:
+                if "mamba" in model_name:
                     fn = lambda: model.generate(
                             input_ids=input_ids,
                             max_length=max_length,
@@ -169,12 +169,12 @@ def phone_book_evaluation(args,model,tokenizer):
         str_acc_mean_list.append(mean_str_acc)
         str_acc_std_list.append(std_str_acc)
         
-        print(f"{args.eval_task}; len {ood_length}: {mean_str_acc} +- {std_str_acc};")
+        print(f"phone_book; len {ood_length}: {mean_str_acc} +- {std_str_acc};")
 
     return str_acc_mean_list, str_acc_std_list
 
 
-def squad_evaluation(args,model,tokenizer):
+def squad_evaluation(model_name,model,tokenizer):
     
     filename = "./dir_counter_lengths/squad/dictionary_squad.json" 
     with open(filename) as f_in:
@@ -218,7 +218,7 @@ def squad_evaluation(args,model,tokenizer):
                 input_ids = tokens.input_ids.to(device="cuda")
                 attn_mask = tokens.attention_mask.to(device="cuda")
                 max_length = input_ids.shape[1] + 200
-                if "mamba" in args.model:
+                if "mamba" in model_name:
                     fn = lambda: model.generate(
                             input_ids=input_ids,
                             max_length=max_length,

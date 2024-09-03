@@ -23,7 +23,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
 
     ##model
-    parser.add_argument('--model', choices=["state-spaces/mamba-370m","state-spaces/mamba-1.4b","state-spaces/mamba-2.8b","EleutherAI/pythia-410m","EleutherAI/pythia-1.4b","EleutherAI/pythia-2.8b"], type=str, required=True)
+    parser.add_argument('--model', choices=["state-spaces/mamba-370m","state-spaces/mamba-1.4b","state-spaces/mamba-2.8b","state-spaces/mamba2-370m","state-spaces/mamba2-1.3b","state-spaces/mamba2-2.7b","EleutherAI/pythia-410m","EleutherAI/pythia-1.4b","EleutherAI/pythia-2.8b"], type=str, required=True)
     
     ##evaluation
     parser.add_argument('--eval_task', choices=["c4_copy","squad","phone_book"], type=str, required=True, help="evaluation task")
@@ -58,11 +58,11 @@ model.eval()
 
 ### Evaluation
 if args.eval_task == "c4_copy":
-    str_acc_mean_list, str_acc_std_list = copy_c4_evaluation(args,model,tokenizer)
+    str_acc_mean_list, str_acc_std_list = copy_c4_evaluation(args.min_eval_len, args.max_eval_len, args.text_order, args.eval_num_batches, args.eval_batch_size, args.model, model, tokenizer)
 elif args.eval_task == "phone_book":
-    str_acc_mean_list, str_acc_std_list = phone_book_evaluation(args,model,tokenizer)
+    str_acc_mean_list, str_acc_std_list = phone_book_evaluation(args.min_eval_len, args.max_eval_len, args.eval_num_batches, args.eval_batch_size, args.model, model,tokenizer)
 elif args.eval_task == "squad":
-    em_list, f1_list, std_em_list, std_f1_list = squad_evaluation(args,pipeline,tokenizer)
+    em_list, f1_list, std_em_list, std_f1_list = squad_evaluation(args.model,model,tokenizer)
 else:
     raise ValueError(f"Non-valid evaluation task {args.eval_task}")
 
