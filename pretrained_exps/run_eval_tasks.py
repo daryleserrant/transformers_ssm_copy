@@ -18,10 +18,10 @@ if args.eval_task == "c4_copy":
     eval_results = []
     print("Starting c4_copy task evals...")
     for model_name in models:
+        tokenizer = get_tokenizer()
+        model = get_model(model_name)
         for s in eval_len:
             entry = {}
-            tokenizer = get_tokenizer()
-            model = get_model(model_name)
             str_acc_mean_list, str_acc_std_list = copy_c4_evaluation(s, s, args.text_order, eval_num_batches, eval_batch_size, model_name, model, tokenizer)
             entry['model'] = model_name
             entry['eval_length'] = s
@@ -38,10 +38,10 @@ elif args.eval_task == "phone_book":
     eval_results = []
     print("Starting phone_book task evals...")
     for model_name in models:
+        tokenizer = get_tokenizer()
+        model = get_model(model_name)
         for s in eval_len:
             entry = {}
-            tokenizer = get_tokenizer()
-            model = get_model(model_name)
             str_acc_mean_list, str_acc_std_list = phone_book_evaluation(s, s, eval_num_batches, eval_batch_size, model_name, model,tokenizer)
             entry['model'] = model_name
             entry['eval_length'] = s
