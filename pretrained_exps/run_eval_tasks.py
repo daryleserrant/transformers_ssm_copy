@@ -58,11 +58,11 @@ elif args.eval_task == "squad":
     context_sizes = list(range(40,440,20))
     print("Starting squad task evals...")
     for model_name in models:
-        entry = {}
         tokenizer = get_tokenizer()
         model = get_model(model_name)
         em_list, f1_list, std_em_list, std_f1_list = squad_evaluation(model_name,model,tokenizer)
         for i in range(len(context_sizes)):
+            entry = {}
             entry['model'] = model_name
             entry['context_size'] = context_sizes[i]
             entry['avg_exact_match_score'] = em_list[i]
