@@ -55,18 +55,21 @@ elif args.eval_task == "phone_book":
     df.to_csv("phone_book_eval_results.csv", index=False)
 elif args.eval_task == "squad":
     eval_results = []
+    context_sizes = list(range(40,440,20))
     print("Starting squad task evals...")
     for model_name in models:
         entry = {}
         tokenizer = get_tokenizer()
         model = get_model(model_name)
         em_list, f1_list, std_em_list, std_f1_list = squad_evaluation(model_name,model,tokenizer)
-        entry['model'] = model_name
-        entry['avg_exact_match_score'] = em_list[0]
-        entry['avg_f1_score'] = f1_list[0]
-        entry['std_exact_match_score'] = std_em_list[0]
-        entry['std_f1_score'] = std_f1_list[0]
-        eval_results.append(entry)
+        for i in range(len(context_sizes)):
+            entry['model'] = model_name
+            entry['context_size'] = context_sizes[i]
+            entry['avg_exact_match_score'] = em_list[i]
+            entry['avg_f1_score'] = f1_list[i]
+            entry['std_exact_match_score'] = std_em_list[i]
+            entry['std_f1_score'] = std_f1_list[i]
+            eval_results.append(entry)
         df = pd.DataFrame(eval_results)
         df.to_csv("squad_eval_results.csv", index=False)
         print(entry)
