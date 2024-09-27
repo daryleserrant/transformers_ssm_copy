@@ -12,7 +12,7 @@ args = parser.parse_args()
 models = ["state-spaces/mamba-370m","state-spaces/mamba-1.4b","state-spaces/mamba-2.8b","state-spaces/mamba2-370m","state-spaces/mamba2-1.3b","state-spaces/mamba2-2.7b","EleutherAI/pythia-410m","EleutherAI/pythia-1.4b","EleutherAI/pythia-2.8b"]
 eval_num_batches = 3
 eval_batch_size = 32
-eval_len = [20, 80, 320]
+eval_len = [10, 20, 40, 80, 160, 320]
 
 if args.eval_task == "c4_copy":
     eval_results = []
@@ -55,7 +55,7 @@ elif args.eval_task == "phone_book":
     df.to_csv("phone_book_eval_results.csv", index=False)
 elif args.eval_task == "squad":
     eval_results = []
-    context_sizes = list(range(40,440,20))
+    context_sizes = ['38 - 41','79 - 81','120','160','199 - 200','239 - 241','277 - 283','314 - 326']
     print("Starting squad task evals...")
     for model_name in models:
         tokenizer = get_tokenizer()
@@ -70,9 +70,9 @@ elif args.eval_task == "squad":
             entry['std_exact_match_score'] = std_em_list[i]
             entry['std_f1_score'] = std_f1_list[i]
             eval_results.append(entry)
+            print(entry)
         df = pd.DataFrame(eval_results)
         df.to_csv("squad_eval_results.csv", index=False)
-        print(entry)
     df = pd.DataFrame(eval_results)
     df.to_csv("squad_eval_results.csv", index=False)
 else:
