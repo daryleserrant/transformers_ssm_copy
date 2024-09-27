@@ -176,7 +176,7 @@ def phone_book_evaluation(min_eval_len, max_eval_len, eval_num_batches, eval_bat
 
 def squad_evaluation(model_name,model,tokenizer):
     
-    filename = "./dir_counter_lengths/squad/dictionary_squad.json" 
+    filename = "./dir_counter_lengths/squad/dictionary_squad_v2.json" 
     with open(filename) as f_in:
         problems = json.load(f_in)
     
@@ -200,73 +200,69 @@ def squad_evaluation(model_name,model,tokenizer):
         counter_prob = 0
         examples = problems[ood_length]
         
-        for (ctr,context) in enumerate(list(examples.keys())):
-            
+        for (ctr,context) in enumerate(list(examples.keys())):       
             qa = examples[context]
-            if len(qa)>=2:
-                question_1 = qa[0][0]
-                ans_1 = qa[0][1]
+            question_1 = qa[0][0]
+            ans_1 = qa[0][1]
 
-                question = qa[1][0]
-                gt = qa[1][1]
+            question = qa[1][0]
+            gt = qa[1][1]
 
-                
-                
-                prompt = context+"\n\n"+"Question: "+question_1+"\n"+"Answer: "+ans_1[0]+"\n\n"+\
-                        "Question: "+question+"\n"+"Answer: "
-                tokens = tokenizer(prompt, return_tensors="pt")
-                input_ids = tokens.input_ids.to(device="cuda")
-                attn_mask = tokens.attention_mask.to(device="cuda")
-                max_length = input_ids.shape[1] + 200
-                if "mamba" in model_name:
-                    fn = lambda: model.generate(
-                            input_ids=input_ids,
-                            max_length=max_length,
-                            cg=True,
-                            return_dict_in_generate=True,
-                            output_scores=True,
-                            enable_timing=False,
-                            temperature=0,
-                        )
-                else:
-                    fn = lambda: model.generate(
-                            input_ids=input_ids,
-                            attention_mask=attn_mask,
-                            max_length=max_length,
-                            return_dict_in_generate=True,
-                            pad_token_id=tokenizer.eos_token_id,
-                            temperature=0,
-                            begin_suppress_tokens=[tokenizer.eos_token_id],
-                        )
-                out = fn()
-                input_length = input_ids.shape[1]
-                generated_tokens = out.sequences[:, input_length:]
-                pred_model=tokenizer.batch_decode(generated_tokens.tolist())[0]
-                pred_model = str(pred_model.split("\n\n")[0].strip())
-                if "<|endoftext|>" in pred_model:
-                    pred_model = pred_model.split("<|endoftext|>")[0]
-                
-                em_for_this_question = metric_max_over_ground_truths(exact_match_score, pred_model, gt)    
-                tmp_em.append(em_for_this_question)
-                em += int(em_for_this_question)
-                f1_for_this_question = metric_max_over_ground_truths(f1_score, pred_model, gt)
-                tmp_f1.append(f1_for_this_question)
-                f1 += f1_for_this_question
-                #print("\n")
-                #print("--"*100)
-                #print(f"PROMPT\n{prompt}\n\n\n")
-                #print(f"QUESTION {question}\n\n")
-                #print(f"\n\nPRED MODEL {pred_model}")
-                #print(f"\n\n LBL {gt}")
-                #print(f"LEN {ood_length}; idx {ctr+1}; em {em/(ctr+1)}; f1 {f1/(ctr+1)}",flush=True)
-                #print("--"*100)
-                #print("\n")
-                counter_prob+=1
-                if counter_prob >= num_examples:
-                    break
+            prompt = context+"\n\n"+"Question: "+question_1+"\n"+"Answer: "+ans_1[0]+"\n\n"+\
+                    "Question: "+question+"\n"+"Answer: "
+            tokens = tokenizer(prompt, return_tensors="pt")
+            input_ids = tokens.input_ids.to(device="cuda")
+            attn_mask = tokens.attention_mask.to(device="cuda")
+            max_length = input_ids.shape[1] + 200
+            if "mamba" in model_name:
+                fn = lambda: model.generate(
+                        input_ids=input_ids,
+                        max_length=max_length,
+                        cg=True,
+                        return_dict_in_generate=True,
+                        output_scores=True,
+                        enable_timing=False,
+                        temperature=0,
+                    )
+            else:
+                fn = lambda: model.generate(
+                        input_ids=input_ids,
+                        attention_mask=attn_mask,
+                        max_length=max_length,
+                        return_dict_in_generate=True,
+                        pad_token_id=tokenizer.eos_token_id,
+                        temperature=0,
+                        begin_suppress_tokens=[tokenizer.eos_token_id],
+                    )
+            out = fn()
+            input_length = input_ids.shape[1]
+            generated_tokens = out.sequences[:, input_length:]
+            pred_model=tokenizer.batch_decode(generated_tokens.tolist())[0]
+            pred_model = str(pred_model.split("\n\n")[0].strip())
+            if "<|endoftext|>" in pred_model:
+                pred_model = pred_model.split("<|endoftext|>")[0]
+            
+            em_for_this_question = metric_max_over_ground_truths(exact_match_score, pred_model, gt)    
+            tmp_em.append(em_for_this_question)
+            em += int(em_for_this_question)
+            f1_for_this_question = metric_max_over_ground_truths(f1_score, pred_model, gt)
+            tmp_f1.append(f1_for_this_question)
+            f1 += f1_for_this_question
+            #print("\n")
+            #print("--"*100)
+            #print(f"PROMPT\n{prompt}\n\n\n")
+            #print(f"QUESTION {question}\n\n")
+            #print(f"\n\nPRED MODEL {pred_model}")
+            #print(f"\n\n LBL {gt}")
+            #print(f"LEN {ood_length}; idx {ctr+1}; em {em/(ctr+1)}; f1 {f1/(ctr+1)}",flush=True)
+            #print("--"*100)
+            #print("\n")
+            counter_prob+=1
+            if counter_prob >= num_examples:
+                break
         assert counter_prob >= 15
-        f1 = f1/counter_prob#num_examples
-        em = em/counter_prob#num_examples
+        f1 = f1/counter_prob #num_examples
+        em = em/counter_prob #num_examples
 
         mean_f1 = np.mean(np.array(tmp_f1))
         std_f1 = np.std(np.array(tmp_f1))
