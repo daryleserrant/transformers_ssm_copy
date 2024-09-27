@@ -186,7 +186,7 @@ def squad_evaluation(model_name,model,tokenizer):
     #print("-"*200,flush=True)
     #print(f"LENGTHS {lengths}",flush=True)
     #print("-"*200,flush=True)
-    num_examples = 30
+    num_examples = 100
 
     em_list = []
     std_em_list = []
